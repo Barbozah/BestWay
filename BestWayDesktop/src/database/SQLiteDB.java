@@ -1,6 +1,7 @@
 package database;
 
 import java.sql.*;
+import java.util.Map;
 
 import models.User;
 import models.Car;
@@ -9,19 +10,20 @@ import models.Passenger;
 import models.Travel;
 
 public class SQLiteDB implements Database {
-  private Connection connection;
+  private String URL = "jdbc:sqlite:src/database/bestway.db";
   private static SQLiteDB instance;
 
   public static SQLiteDB getInstance() {
-    if (instance == null) {
-      instance = new SQLiteDB();
+    if (SQLiteDB.instance == null) {
+      SQLiteDB.instance = new SQLiteDB();
+      return SQLiteDB.instance;
     }
     return new SQLiteDB();
   }
 
   private SQLiteDB() {
     System.out.println("Conectando ao SQLite database...");
-    try (Connection connection = DriverManager.getConnection("jdbc:sqlite:src/database/database.db")) {
+    try (Connection connection = DriverManager.getConnection(URL)) {
       System.out.println("Conexão ao SQLite foi estabelecida.");
 
       Statement statement = connection.createStatement();
@@ -36,52 +38,46 @@ public class SQLiteDB implements Database {
 
       statement.execute("CREATE TABLE IF NOT EXISTS " + Travel.getSQLString());
 
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-  public void connect() {
-    try (Connection connection = DriverManager.getConnection("jdbc:sqlite:src/database/database.db")) {
-      if (this.connection != null) {
-        this.connection.close();
-      }
-      this.connection = connection;
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-  public void disconnect() {
-    System.out.println("Disconnecting from SQLite database...");
-    try {
-      if (connection != null) {
-        connection.close();
-      }
-    } catch (SQLException ex) {
-      System.out.println(ex.getMessage());
-    }
-  }
-
-  @Override
-  public void insert(String data, String table) {
-    String sql = "INSERT INTO " + table + " VALUES(" + data + ")";
-    if (this.connection != null)
-      this.connect();
-    try (Statement statement = this.connection.createStatement()) {
-      statement.execute(sql);
+      connection.close();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
   }
 
   @Override
-  public void update(String data, String table, String condition) {
-    String sql = "UPDATE " + table + " SET " + data + " WHERE " + condition;
-    if (this.connection != null)
-      this.connect();
-    try (Statement statement = this.connection.createStatement()) {
+  public void insert(Map<String, ?> data, String table) {
+    String keys = "(";
+    String values = "(";
+    for (String key : data.keySet()) {
+      keys += key.split(" ")[0] + ", ";
+      values += String.format("'" + key.split(" ")[1] + "', ", data.get(key));
+    }
+    keys = keys.substring(0, keys.length() - 2) + ")";
+    values = values.substring(0, values.length() - 2) + ")";
+    String sql = "INSERT INTO " + table + keys + " VALUES " + values;
+    try (Connection connection = DriverManager.getConnection(URL)) {
+      Statement statement = connection.createStatement();
       statement.execute(sql);
+      connection.close();
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  @Override
+  public void update(Map<String, ?> data, String table, String condition) {
+    String set = "";
+    for (Map.Entry<String, ?> entry : data.entrySet()) {
+      String key = entry.getKey().split(" ")[0];
+      String format = entry.getKey().split(" ")[1];
+      set += key + String.format(" = '" + format + "', ", entry.getValue());
+    }
+    set = set.substring(0, set.length() - 2);
+    String sql = "UPDATE " + table + " SET " + set + " WHERE " + condition;
+    try (Connection connection = DriverManager.getConnection(URL)) {
+      Statement statement = connection.createStatement();
+      statement.execute(sql);
+      connection.close();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
@@ -90,21 +86,21 @@ public class SQLiteDB implements Database {
   @Override
   public void delete(String table, String condition) {
     String sql = "DELETE FROM " + table + " WHERE " + condition;
-    if (this.connection != null)
-      this.connect();
-    try (Statement statement = this.connection.createStatement()) {
+    try (Connection connection = DriverManager.getConnection(URL)) {
+      Statement statement = connection.createStatement();
       statement.execute(sql);
+      connection.close();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
   }
 
   @Override
-  public Object select(String table, String query) {
-    if (this.connection != null)
-      this.connect();
-    try (Statement statement = this.connection.createStatement()) {
+  public Object select(String query) {
+    try (Connection connection = DriverManager.getConnection(URL)) {
+      Statement statement = connection.createStatement();
       ResultSet resultSet = statement.executeQuery(query);
+      connection.close();
       return resultSet;
     } catch (SQLException e) {
       System.out.println(e.getMessage());

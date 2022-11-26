@@ -23,13 +23,9 @@ public interface Travel {
 
   public void setPrice(double price);
 
-  public Driver getDriver();
+  public UUID getDriver();
 
-  public void setDriver(Driver driver);
-
-  public Passenger getPassenger();
-
-  public void setPassenger(Passenger passenger);
+  public UUID getPassenger();
 
   public void setOrigin(String origin);
 
@@ -42,6 +38,6 @@ public interface Travel {
   public void setNumSeats(int numSeats);
 
   public static String getSQLString() {
-    return "travel(uuid UUID, origin VARCHAR, destination VARCHAR, departureTime VARCHAR, arrivalTime VARCHAR, numSeats INT, numSeatsAvailable INT, price DOUBLE, driver UUID, passenger UUID)";
+    return "travel(uuid UUID, origin VARCHAR, destination VARCHAR, departure_time VARCHAR, arrival_time VARCHAR, seats INT, seats_available INT, price DOUBLE, driver UUID, passenger UUID)";
   }
 }

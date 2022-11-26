@@ -1,15 +1,13 @@
 package database;
 
+import java.util.Map;
+
 public interface Database {
-  public void connect();
+  public void insert(Map<String, ?> data, String table);
 
-  public void disconnect();
-
-  public void insert(String data, String table);
-
-  public void update(String data, String table, String condition);
+  public void update(Map<String, ?> data, String table, String condition);
 
   public void delete(String table, String condition);
 
-  public Object select(String table, String query);
+  public Object select(String query);
 }

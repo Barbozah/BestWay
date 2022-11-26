@@ -30,6 +30,6 @@ public interface Car {
   public void setNumSeats(int numSeats);
 
   public static String getSQLString() {
-    return "car(uuid UUID, make VARCHAR, model VARCHAR, year VARCHAR, licensePlate VARCHAR, color VARCHAR, numSeats INT)";
+    return "car(uuid UUID, make VARCHAR, model VARCHAR, year VARCHAR, license_plate VARCHAR, color VARCHAR, seats INT)";
   }
 }

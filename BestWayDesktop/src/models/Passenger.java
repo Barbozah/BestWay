@@ -1,9 +1,6 @@
 package models;
 
-import java.util.UUID;
-
 public interface Passenger extends User {
-  public UUID getUuid();
 
   public void setPaymentMethod(String paymentMethod);
 
@@ -18,6 +15,6 @@ public interface Passenger extends User {
   public void setWallet(double amount);
 
   public static String getSQLString() {
-    return "passenger(uuid UUID, paymentMethod VARCHAR, wallet DOUBLE)";
+    return "passenger(uuid UUID, payment_method VARCHAR, wallet DOUBLE)";
   }
 }

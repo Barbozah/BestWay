@@ -1,9 +1,5 @@
 package models;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.UUID;
 
 public abstract class UserWithHashedPassword implements User {
@@ -11,19 +7,38 @@ public abstract class UserWithHashedPassword implements User {
   private String name;
   private String email;
   private String address;
-  private byte[] hashedPassword;
-  private byte[] passwordSalt;
-  private SecureRandom random;
-  private MessageDigest md;
+  private String phoneNumber;
+  private float rating;
+  private String password;
+  private String salt;
+  private PasswordEncrypt encryptor;
 
-  public UserWithHashedPassword(String name, String email, String password) {
+  public UserWithHashedPassword(
+      String name, String email, String password,
+      String address, String phoneNumber) {
     this.uuid = UUID.randomUUID();
     this.name = name;
     this.email = email;
-    this.passwordSalt = new byte[16];
-    random = new SecureRandom();
-    random.nextBytes(this.passwordSalt);
-    this.setPassword(password);
+    this.encryptor = new PBEKeySpecEncryptor(10000, 256);
+    this.salt = this.encryptor.getSaltValue(30);
+    this.password = this.encryptor.generateSecurePassword(password, this.salt);
+    this.address = address;
+    this.phoneNumber = phoneNumber;
+    this.rating = 5;
+  }
+
+  public UserWithHashedPassword(
+      String name, String email, String password, String address,
+      String phoneNumber, PasswordEncrypt encryptor) {
+    this.uuid = UUID.randomUUID();
+    this.name = name;
+    this.email = email;
+    this.encryptor = encryptor;
+    this.salt = encryptor.getSaltValue(30);
+    this.password = encryptor.generateSecurePassword(password, this.salt);
+    this.address = address;
+    this.phoneNumber = phoneNumber;
+    this.rating = 5;
   }
 
   public UUID getUuid() {
@@ -47,18 +62,16 @@ public abstract class UserWithHashedPassword implements User {
   }
 
   public boolean checkPassword(String password) {
-    this.md.update(this.passwordSalt);
-    return MessageDigest.isEqual(password.getBytes(StandardCharsets.UTF_8), this.hashedPassword);
+    return this.encryptor.verifyUserPassword(password, this.password, this.salt);
+  }
+
+  public String getPassword() {
+    return this.password;
   }
 
   public void setPassword(String password) {
-    try {
-      this.md = MessageDigest.getInstance("SHA-512");
-      this.md.update(this.passwordSalt);
-      this.hashedPassword = this.md.digest(password.getBytes(StandardCharsets.UTF_8));
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("SHA-512 algorithm not found");
-    }
+    this.salt = this.encryptor.getSaltValue(30);
+    this.password = this.encryptor.generateSecurePassword(password, this.salt);
   }
 
   public String getAddress() {
@@ -67,5 +80,21 @@ public abstract class UserWithHashedPassword implements User {
 
   public void setAddress(String address) {
     this.address = address;
+  }
+
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
+
+  public float getRating() {
+    return rating;
+  }
+
+  public void setRating(float rating) {
+    this.rating = rating;
   }
 }

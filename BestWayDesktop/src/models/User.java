@@ -15,6 +15,8 @@ public interface User {
 
   public void setPassword(String password);
 
+  public String getPassword();
+
   public boolean checkPassword(String password);
 
   public String getAddress();
@@ -25,11 +27,11 @@ public interface User {
 
   public void setPhoneNumber(String phoneNumber);
 
-  public int getRating();
+  public float getRating();
 
-  public void setRating(int rating);
+  public void setRating(float rating);
 
   public static String getSQLString() {
-    return "user(uuid UUID, name VARCHAR, email VARCHAR, address VARCHAR, phone VARCHAR, rating INT, password VARCHAR)";
+    return "user(uuid UUID, name VARCHAR, email VARCHAR, address VARCHAR, phone VARCHAR, rating FLOAT, password VARCHAR, salt VARCHAR)";
   }
 }
