@@ -15,14 +15,6 @@ public interface Passenger extends User {
   public void setWallet(double amount);
 
   public static String getSQLString() {
-    return """
-          passenger (
-            uuid UUID,
-            payment_method VARCHAR,
-            wallet FLOAT,
-            PRIMARY KEY (uuid),
-            FOREIGN KEY (uuid) REFERENCES user(uuid)
-          )
-        """;
+    return "passenger (uuid UUID,payment_method VARCHAR,wallet FLOAT,PRIMARY KEY (uuid),FOREIGN KEY (uuid) REFERENCES user(uuid))";
   }
 }

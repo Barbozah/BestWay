@@ -113,6 +113,18 @@ public class UserRepository {
     return result.get(0);
   }
 
+  public User getUser(String email, String password) {
+    List<User> result = this.searchUsers("user.email", email);
+    if (result == null || result.size() == 0) {
+      return null;
+    }
+    User user = result.get(0);
+    if (user.checkPassword(password)) {
+      return user;
+    }
+    return null;
+  }
+
   public Passenger getPassenger(String uuid) {
     List<User> result = this.searchUsers("user.uuid", uuid);
     if (result == null || result.size() == 0) {
@@ -126,10 +138,9 @@ public class UserRepository {
 
   public Driver getDriver(String uuid) {
     List<User> result = this.searchUsers("user.uuid", uuid);
-    if (result == null || result.size() == 0) {
-      return null;
-    }
-    if (result.get(0) instanceof Driver) {
+    if (result != null &&
+        result.size() != 0 &&
+        result.get(0) instanceof Driver) {
       return (Driver) result.get(0);
     }
     return null;
@@ -149,25 +160,67 @@ public class UserRepository {
         },
         "user",
         "uuid = " + u.getUuid().toString());
+    if (u instanceof Passenger) {
+      db.update(new HashMap<String, String>() {
+        {
+          put("payment_method %s", ((Passenger) u).getPaymentMethod());
+          put("wallet %s", String.valueOf(((Passenger) u).getWallet()));
+        }
+      }, "passenger", "uuid = " + u.getUuid().toString());
+    } else if (u instanceof Driver) {
+      db.update(new HashMap<>() {
+        {
+          put("uuid_car %s", ((Driver) u).getCar().getUuid().toString());
+        }
+      }, "driver", "uuid = " + u.getUuid().toString());
+    }
   }
 
-  public void updatePassenger(Passenger p) {
-    updateUser(p);
-    db.update(new HashMap<>() {
-      {
-        put("payment_method %s", p.getPaymentMethod());
-        put("wallet %s", String.valueOf(p.getWallet()));
+  public void updateUser(Map<String, String> fields) {
+    if (!fields.containsKey("uuid"))
+      return;
+    String uuid = fields.get("uuid");
+    User u = getUser(uuid);
+    if (u == null)
+      return;
+    for (Map.Entry<String, String> entry : fields.entrySet()) {
+      switch (entry.getKey()) {
+        case "name":
+          u.setName(entry.getValue());
+          break;
+        case "email":
+          u.setEmail(entry.getValue());
+          break;
+        case "password":
+          u.setPassword(entry.getValue());
+          break;
+        case "address":
+          u.setAddress(entry.getValue());
+          break;
+        case "phone":
+          u.setPhoneNumber(entry.getValue());
+          break;
+        case "rating":
+          u.setRating(Float.parseFloat(entry.getValue()));
+          break;
+        case "payment_method":
+          if (u instanceof Passenger) {
+            ((Passenger) u).setPaymentMethod(entry.getValue());
+          }
+          break;
+        case "wallet":
+          if (u instanceof Passenger) {
+            ((Passenger) u).setWallet(Double.parseDouble(entry.getValue()));
+          }
+          break;
+        case "uuid_car":
+          if (u instanceof Driver) {
+            ((Driver) u).setCar(CarRepository.getInstance().getCar(entry.getValue()));
+          }
+          break;
       }
-    }, "passenger", "uuid = " + p.getUuid().toString());
-  }
-
-  public void updateDriver(Driver d) {
-    updateUser(d);
-    db.update(new HashMap<>() {
-      {
-        put("uuid_car %s", d.getCar().getUuid().toString());
-      }
-    }, "driver", "uuid = " + d.getUuid().toString());
+    }
+    updateUser(u);
   }
 
   public void deleteUser(User u) {
@@ -180,6 +233,17 @@ public class UserRepository {
       db.delete("driver", "uuid = " + u.getUuid().toString());
     }
     db.delete("user", "uuid = " + u.getUuid().toString());
+  }
+
+  public void deleteUser(String uuid) {
+    User u = getUser(uuid);
+    if (u == null)
+      return;
+    deleteUser(u);
+  }
+
+  public List<User> getAllUsers() {
+    return searchUsers("1", "1");
   }
 
   public List<User> search(Map<String, String> terms) {

@@ -2,6 +2,9 @@ package controllers;
 
 public class Controller {
   UserController userController;
+  CarController carController;
+  TravelController travelController;
+
   private static Controller instance;
 
   private Controller() {
@@ -18,5 +21,13 @@ public class Controller {
 
   public UserController getUserController() {
     return this.userController;
+  }
+
+  public CarController getCarController() {
+    return this.carController;
+  }
+
+  public TravelController getTravelController() {
+    return this.travelController;
   }
 }

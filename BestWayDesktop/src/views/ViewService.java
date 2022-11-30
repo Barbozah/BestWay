@@ -2,7 +2,6 @@ package views;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Map;
 
 public class ViewService {
   private static BufferedReader reader;
@@ -19,17 +18,22 @@ public class ViewService {
     return instance;
   }
 
-  public String waitInput(ViewServiceOptions options, String message) {
+  public void waitInput(ViewServiceOptions options, String message) {
     while (true) {
-      System.out.println(message);
-      for (Map.Entry<String, Callback> entry : options.getOptions().entrySet()) {
-        System.out.println(entry.getKey());
+      System.out.println("\n" + message);
+      for (String key : options.getOptions().keySet()) {
+        if (options.getLabel(key) != null) {
+          System.out.println(key + " - " + options.getLabel(key));
+        } else {
+          System.out.println(key);
+        }
       }
       try {
+        System.out.print("> ");
         String option = reader.readLine();
-        if (options.getOptions().containsKey(option)) {
-          options.getOptions().get(option).callback();
-          return option;
+        if (options.getOptions().containsKey(option.toLowerCase())) {
+          boolean back = options.getOption(option).callback();
+          if (back) return;
         }
       } catch (Exception e) {
         System.out.println("Opção inválida");
@@ -39,7 +43,17 @@ public class ViewService {
 
   public String readInput() {
     try {
+      System.out.print("> ");
       return reader.readLine();
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
+  public String readPassword() {
+    try {
+      System.out.print("> ");
+      return new String(System.console().readPassword());
     } catch (Exception e) {
       return "";
     }

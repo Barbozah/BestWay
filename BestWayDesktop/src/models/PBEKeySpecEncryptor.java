@@ -13,8 +13,8 @@ public class PBEKeySpecEncryptor implements PasswordEncrypt {
 
   private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   private final Random random = new SecureRandom();
-  private int iterations = 10000;
-  private int keylength = 256;
+  private int iterations;
+  private int keylength;
   private String alphabet;
 
   public PBEKeySpecEncryptor(int iterations, int keylength) {

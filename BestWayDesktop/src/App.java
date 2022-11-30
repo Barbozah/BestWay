@@ -1,67 +1,71 @@
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import controllers.RoutingService;
 import database.Database;
 import database.SQLiteDB;
 import database.UserRepository;
 import models.Car;
 import models.CarDefault;
 import models.Driver;
-import models.DriverClient;
+import models.PBEKeySpecEncryptor;
 import models.Passenger;
-import models.PassengerClient;
-import models.User;
-import models.Travel;
-import models.TravelDefault;
+import models.PasswordEncrypt;
+import views.MainView;
 
 public class App {
 
   public static void main(String[] args) throws Exception {
+
     Database db = SQLiteDB.getInstance();
     UserRepository userRepo = UserRepository.getInstance();
+    
+    // Passenger passenger = userRepo.insertPassenger(
+    //     "Heloise Nina Novaes",
+    //     "heloise@email.com",
+    //     "123",
+    //     "Avenida das Flores - 379, Novo Mundo, Várzea Grande - MT, Brasil, 278149-584",
+    //     "(65) 2882-5014",
+    //     "Dinheiro",
+    //     100.0);
 
     // Passenger passenger = userRepo.insertPassenger(
-    // "Heloise Nina Novaes",
-    // "heloise@email.com",
-    // "123",
-    // "Avenida das Flores - 379, Novo Mundo, Várzea Grande - MT, Brasil,
-    // 278149-584",
-    // "(65) 2882-5014",
-    // "Dinheiro",
-    // 100.0);
+    //       "Igor Novaes",
+    //       "igor@email.com",
+    //       "123",
+    //       "Avenida das Flores - 379, Novo Mundo, Várzea Grande - MT, Brasil, 278149-584",
+    //       "(65) 2882-5014",
+    //       "Dinheiro",
+    //       100.0);
 
     // Car car = new CarDefault(
-    // "Fiat",
-    // "Uno",
-    // "Branco",
-    // "2010",
-    // 4,
-    // "MWU-8729");
+    //     "Fiat",
+    //     "Uno",
+    //     "Branco",
+    //     "2010",
+    //     4,
+    //     "MWU-8729");
 
     // db.insert(
-    // new HashMap<String, String>() {
-    // {
-    // put("uuid_car %s", car.getUuid().toString());
-    // put("make %s", car.getMake());
-    // put("model %s", car.getModel());
-    // put("year %s", car.getYear());
-    // put("license_plate %s", car.getLicensePlate());
-    // put("color %s", car.getColor());
-    // put("seats %s", String.valueOf(car.getNumSeats()));
-    // }
-    // },
-    // "car");
+    //     new HashMap<String, String>() {
+    //       {
+    //         put("uuid_car %s", car.getUuid().toString());
+    //         put("make %s", car.getMake());
+    //         put("model %s", car.getModel());
+    //         put("year %s", car.getYear());
+    //         put("license_plate %s", car.getLicensePlate());
+    //         put("color %s", car.getColor());
+    //         put("seats %s", String.valueOf(car.getNumSeats()));
+    //       }
+    //     },
+    //     "car");
 
     // Driver driver = userRepo.insertDriver(
-    // "Eduarda Mariah Flávia da Paz", "eduarda@email.com", "123",
-    // "Rua Arnando Peres - 227, Itaúna, São Gonçalo - RJ, Brasil, 24476-130",
-    // "(21) 98149-1547", car);
+    //     "Eduarda Maria Flávia da Paz", "maria@email.com", "123",
+    //     "Rua Arnando Peres - 227, Itaúna, São Gonçalo - RJ, Brasil, 24476-130",
+    //     "(21) 98149-1547", car);
 
-    System.out.println(userRepo.searchUsers("name", "Eduarda"));
+    new MainView();
+
+    // System.out.println(userRepo.searchUsers("name", "Eduarda"));
     // String latLong1 = "-35.2802787,-8.1228656";
     // String latLong2 = "-35.28217503962572,-8.1149182";
     // System.out.println(RoutingService.getTravelInfo(latLong1,

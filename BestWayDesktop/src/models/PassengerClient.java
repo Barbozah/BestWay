@@ -19,6 +19,7 @@ public class PassengerClient extends UserWithHashedPassword implements Passenger
     super(name, email, password, address, phoneNumber);
     this.rating = rating;
     this.uuid = UUID.fromString(uuid);
+    this.password = password;
     this.salt = salt;
     this.paymentMethod = paymentMethod;
     this.wallet = wallet;
@@ -50,7 +51,7 @@ public class PassengerClient extends UserWithHashedPassword implements Passenger
 
   public String toString() {
     return String.format(
-        "Passenger: %s, %s, %s, %s, %s, %s",
+        "Passenger: %s, %s",
         this.getName(),
         this.getPhoneNumber());
   }

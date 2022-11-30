@@ -1,5 +1,7 @@
 package views;
 
 public interface Callback {
-  public void callback();
+  // retorna true para encerrar a pilha de chamadas
+  // retorna false para continuar empilhando
+  public boolean callback();
 }

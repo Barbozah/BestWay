@@ -31,6 +31,22 @@ public class TravelDefault implements Travel {
     this.passenger = passenger.getUuid();
   }
 
+  public TravelDefault(
+      String uuid, String driver, String passenger,
+      String origin, String destination, String departureTime,
+      String arrivalTime, int numSeats, int numSeatsAvailable, double price) {
+    this.uuid = UUID.fromString(uuid);
+    this.origin = origin;
+    this.destination = destination;
+    this.departureTime = departureTime;
+    this.arrivalTime = arrivalTime;
+    this.numSeats = numSeats;
+    this.numSeatsAvailable = numSeatsAvailable;
+    this.price = price;
+    this.driver = UUID.fromString(driver);
+    this.passenger = UUID.fromString(passenger);
+  }
+
   @Override
   public UUID getUuid() {
     return this.uuid;

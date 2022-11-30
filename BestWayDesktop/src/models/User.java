@@ -34,18 +34,6 @@ public interface User {
   public void setRating(float rating);
 
   public static String getSQLString() {
-    return """
-          user (
-            uuid UUID,
-            name VARCHAR,
-            email VARCHAR,
-            address VARCHAR,
-            phone VARCHAR,
-            rating FLOAT,
-            password VARCHAR,
-            salt VARCHAR,
-            PRIMARY KEY (uuid)
-          )
-        """;
+    return "user ( uuid UUID, name VARCHAR, email VARCHAR, address VARCHAR, phone VARCHAR, rating FLOAT, password VARCHAR, salt VARCHAR, PRIMARY KEY (uuid))";
   }
 }
