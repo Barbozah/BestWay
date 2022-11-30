@@ -1,6 +1,6 @@
 package models;
 
-public interface PasswordEncrypt {
+public interface PasswordEncrypt extends java.io.Serializable {
   public String getSaltValue(int length);
 
   public byte[] hash(char[] password, byte[] salt);

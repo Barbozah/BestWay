@@ -1,6 +1,8 @@
 package database;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import models.User;
@@ -22,10 +24,7 @@ public class SQLiteDB implements Database {
   }
 
   private SQLiteDB() {
-    System.out.println("Conectando ao SQLite database...");
     try (Connection connection = DriverManager.getConnection(URL)) {
-      System.out.println("Conexão ao SQLite foi estabelecida.");
-
       Statement statement = connection.createStatement();
 
       statement.execute("CREATE TABLE IF NOT EXISTS " + User.getSQLString());
@@ -96,12 +95,26 @@ public class SQLiteDB implements Database {
   }
 
   @Override
-  public Object select(String query) {
+  public ArrayList<Map<String, String>> select(String query) {
     try (Connection connection = DriverManager.getConnection(URL)) {
       Statement statement = connection.createStatement();
       ResultSet resultSet = statement.executeQuery(query);
+      ArrayList<Map<String, String>> result = new ArrayList<Map<String, String>>();
+      while (resultSet.next()) {
+        Map<String, String> map = new HashMap<String, String>();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        for (int i = 1; i < metaData.getColumnCount(); i++) {
+          String key = metaData.getColumnName(i + 1);
+          map.put(key, resultSet.getString(key));
+        }
+        String uuid = resultSet.getString("uuid");
+        if (uuid != null) {
+          map.put("uuid", uuid);
+        }
+        result.add(map);
+      }
       connection.close();
-      return resultSet;
+      return result;
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }

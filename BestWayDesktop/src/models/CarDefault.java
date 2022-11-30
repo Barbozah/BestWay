@@ -22,6 +22,16 @@ public class CarDefault implements Car {
     this.licensePlate = licensePlate;
   }
 
+  public CarDefault(String uuid, String make, String model, String color, String year, int seats, String licensePlate) {
+    this.uuid = UUID.fromString(uuid);
+    this.make = make;
+    this.model = model;
+    this.color = color;
+    this.year = year;
+    this.seats = seats;
+    this.licensePlate = licensePlate;
+  }
+
   @Override
   public UUID getUuid() {
     return this.uuid;

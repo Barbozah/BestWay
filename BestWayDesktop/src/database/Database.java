@@ -1,5 +1,6 @@
 package database;
 
+import java.util.List;
 import java.util.Map;
 
 public interface Database {
@@ -9,5 +10,5 @@ public interface Database {
 
   public void delete(String table, String condition);
 
-  public Object select(String query);
+  public List<Map<String, String>> select(String query);
 }

@@ -38,6 +38,22 @@ public interface Travel {
   public void setNumSeats(int numSeats);
 
   public static String getSQLString() {
-    return "travel(uuid UUID, origin VARCHAR, destination VARCHAR, departure_time VARCHAR, arrival_time VARCHAR, seats INT, seats_available INT, price DOUBLE, driver UUID, passenger UUID)";
+    return """
+        travel (
+          uuid_travel UUID,
+          uuid_driver UUID,
+          uuid_passenger UUID,
+          origin VARCHAR,
+          destination VARCHAR,
+          departure_time VARCHAR,
+          arrival_time VARCHAR,
+          seats INT,
+          seats_available INT,
+          price DOUBLE,
+          PRIMARY KEY (uuid_travel),
+          FOREIGN KEY (uuid_passenger) REFERENCES passenger(uuid),
+          FOREIGN KEY (uuid_driver) REFERENCES driver(uuid)
+        )
+          """;
   }
 }

@@ -3,14 +3,14 @@ package models;
 import java.util.UUID;
 
 public abstract class UserWithHashedPassword implements User {
-  private UUID uuid;
+  protected UUID uuid;
   private String name;
   private String email;
   private String address;
   private String phoneNumber;
-  private float rating;
-  private String password;
-  private String salt;
+  protected float rating;
+  protected String password;
+  protected String salt;
   private PasswordEncrypt encryptor;
 
   public UserWithHashedPassword(
@@ -72,6 +72,10 @@ public abstract class UserWithHashedPassword implements User {
   public void setPassword(String password) {
     this.salt = this.encryptor.getSaltValue(30);
     this.password = this.encryptor.generateSecurePassword(password, this.salt);
+  }
+
+  public String getSalt() {
+    return this.salt;
   }
 
   public String getAddress() {
