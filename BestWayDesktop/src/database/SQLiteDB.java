@@ -107,11 +107,20 @@ public class SQLiteDB implements Database {
           String key = metaData.getColumnName(i + 1);
           map.put(key, resultSet.getString(key));
         }
-        String uuid = resultSet.getString("uuid");
+        String uuid;
+        try {
+          uuid = resultSet.getString("uuid");
+        } catch (SQLException e) {
+          try {
+            uuid = resultSet.getString("uuid_car");
+          } catch (SQLException e1) {
+            uuid = resultSet.getString("uuid_travel");
+          }
+        }
         if (uuid != null) {
           map.put("uuid", uuid);
+          result.add(map);
         }
-        result.add(map);
       }
       connection.close();
       return result;

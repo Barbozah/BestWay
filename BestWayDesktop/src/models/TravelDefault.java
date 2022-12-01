@@ -12,9 +12,10 @@ public class TravelDefault implements Travel {
   private int numSeats;
   private int numSeatsAvailable;
   private double price;
+  private float rating;
 
-  private UUID driver;
-  private UUID passenger;
+  private String driver;
+  private String passenger;
 
   public TravelDefault(
       Driver driver, Passenger passenger,
@@ -27,8 +28,8 @@ public class TravelDefault implements Travel {
     this.numSeats = 1;
     this.numSeatsAvailable = 1;
     this.price = price;
-    this.driver = driver.getUuid();
-    this.passenger = passenger.getUuid();
+    this.driver = driver.getUuid().toString();
+    this.passenger = passenger.getUuid().toString();
   }
 
   public TravelDefault(
@@ -43,8 +44,8 @@ public class TravelDefault implements Travel {
     this.numSeats = numSeats;
     this.numSeatsAvailable = numSeatsAvailable;
     this.price = price;
-    this.driver = UUID.fromString(driver);
-    this.passenger = UUID.fromString(passenger);
+    this.driver = driver;
+    this.passenger = passenger;
   }
 
   @Override
@@ -93,12 +94,12 @@ public class TravelDefault implements Travel {
   }
 
   @Override
-  public UUID getDriver() {
+  public String getDriver() {
     return this.driver;
   }
 
   @Override
-  public UUID getPassenger() {
+  public String getPassenger() {
     return this.passenger;
   }
 
@@ -130,5 +131,15 @@ public class TravelDefault implements Travel {
   @Override
   public void setNumSeatsAvailable(int numSeatsAvailable) {
     this.numSeatsAvailable = numSeatsAvailable;
+  }
+
+  @Override
+  public float getRating() {
+    return this.rating;
+  }
+
+  @Override
+  public void setRating(float rating) {
+    this.rating = rating;
   }
 }

@@ -27,8 +27,9 @@ public class RegisterUserView {
         String paymentMethod = ViewService.getInstance().readInput();
         System.out.println("Digite o saldo na carteira do passageiro: ");
         String walletBalance = ViewService.getInstance().readInput();
-        Controller.getInstance().getUserController().registerPassenger(name, email, password, address, phone,
-            paymentMethod, Double.parseDouble(walletBalance));
+        Controller.getInstance().getUserController().registerPassenger(
+            name, email, password, address, phone, paymentMethod,
+            Double.parseDouble(walletBalance));
         System.out.println("Passageiro cadastrado com sucesso!");
         return false;
       }
@@ -46,7 +47,6 @@ public class RegisterUserView {
         String phone = ViewService.getInstance().readInput();
         System.out.println("Digite o endereço do motorista como latitude e longitude: ");
         String address = ViewService.getInstance().readInput();
-        System.out.println("Selecione o veiculo do motorista: ");
         ViewServiceOptions optionsCar = new ViewServiceOptions();
         List<Car> cars = Controller.getInstance().getCarController().getCars();
         cars.forEach(car -> {
@@ -56,9 +56,8 @@ public class RegisterUserView {
               new Callback() {
                 public boolean callback() {
                   Controller.getInstance().getUserController().registerDriver(
-                    name, email, password, address,
-                    phone, car.getUuid().toString()
-                  );
+                      name, email, password, address,
+                      phone, car.getUuid().toString());
                   System.out.println("Motorista cadastrado com sucesso!");
                   return true;
                 }
@@ -67,31 +66,15 @@ public class RegisterUserView {
         optionsCar.addOption("0", "Adicionar um novo modelo", new Callback() {
           @Override
           public boolean callback() {
-            System.out.println("Digite a fabricante do veículo: ");
-            String make = ViewService.getInstance().readInput();
-            System.out.println("Digite o modelo do veículo: ");
-            String model = ViewService.getInstance().readInput();
-            System.out.println("Digite o ano do veículo: ");
-            String year = ViewService.getInstance().readInput();
-            System.out.println("Digite a cor do veículo: ");
-            String color = ViewService.getInstance().readInput();
-            System.out.println("Digite a placa do veículo: ");
-            String plate = ViewService.getInstance().readInput();
-            System.out.println("Digite o número de assentos do veículo: ");
-            String seats = ViewService.getInstance().readInput();
-            Car car = Controller.getInstance().getCarController().registerCar(
-              make, model, year, color, Integer.parseInt(seats), plate
-            );
-            System.out.println("Veículo cadastrado com sucesso!");
+            Car car = RegisterCar.registerCar();
             Controller.getInstance().getUserController().registerDriver(
-                    name, email, password, address,
-                    phone, car.getUuid().toString()
-                  );
+                name, email, password, address,
+                phone, car.getUuid().toString());
             System.out.println("Motorista cadastrado com sucesso!");
             return true;
           }
         });
-        ViewService.getInstance().waitInput(optionsCar, "Selecione o veiculo do motorista: ");
+        ViewService.getInstance().waitInput(optionsCar, "Selecione o veículo do motorista: ");
         return false;
       }
     });
@@ -99,10 +82,10 @@ public class RegisterUserView {
     options.addOption("<", "Voltar", new Callback() {
       @Override
       public boolean callback() {
-          return true;
+        return true;
       }
     });
-    
+
     ViewService.getInstance().waitInput(options, "Selecione o tipo de usuário a ser cadastrado: ");
   }
 

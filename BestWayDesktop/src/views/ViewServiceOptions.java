@@ -10,6 +10,7 @@ final class Option {
 
 public class ViewServiceOptions {
   private Map<String, Option> options;
+  private Callback defaultOption;
 
   public ViewServiceOptions() {
     this.options = new HashMap<String, Option>();
@@ -32,6 +33,14 @@ public class ViewServiceOptions {
 
   public String getLabel(String key) {
     return this.options.get(key).label;
+  }
+
+  public void setDefaultOption(Callback callback) {
+    this.defaultOption = callback;
+  }
+
+  public Callback getDefaultOption() {
+    return this.defaultOption;
   }
 
   public Map<String, Option> getOptions() {

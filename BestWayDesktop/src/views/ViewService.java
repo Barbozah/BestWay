@@ -18,7 +18,7 @@ public class ViewService {
     return instance;
   }
 
-  public void waitInput(ViewServiceOptions options, String message) {
+  public Object waitInput(ViewServiceOptions options, String message) {
     while (true) {
       System.out.println("\n" + message);
       for (String key : options.getOptions().keySet()) {
@@ -33,7 +33,14 @@ public class ViewService {
         String option = reader.readLine();
         if (options.getOptions().containsKey(option.toLowerCase())) {
           boolean back = options.getOption(option).callback();
-          if (back) return;
+          if (back)
+            return option;
+        } else {
+          if (options.getDefaultOption() != null) {
+            boolean back = options.getDefaultOption().callback();
+            if (back)
+              return option;
+          }
         }
       } catch (Exception e) {
         System.out.println("Opção inválida");

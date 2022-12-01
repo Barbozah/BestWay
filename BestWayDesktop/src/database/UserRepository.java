@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import models.Car;
 import models.CarDefault;
@@ -79,7 +78,9 @@ public class UserRepository {
         "passenger");
   }
 
-  public Driver insertDriver(String name, String email, String password, String address, String phoneNumber, Car car) {
+  public Driver insertDriver(
+      String name, String email, String password, String address,
+      String phoneNumber, Car car) {
     Driver driver = new DriverClient(name, email, password, address, phoneNumber, car);
     insertUser(driver);
     db.insert(
@@ -87,6 +88,7 @@ public class UserRepository {
           {
             put("uuid %s", driver.getUuid().toString());
             put("uuid_car %s", driver.getCar().getUuid().toString());
+            put("wallet %s", String.valueOf(driver.getWallet()));
           }
         },
         "driver");
@@ -100,6 +102,7 @@ public class UserRepository {
           {
             put("uuid %s", d.getUuid().toString());
             put("car_uuid %s", d.getCar().getUuid().toString());
+            put("wallet %s", String.valueOf(d.getWallet()));
           }
         },
         "driver");
@@ -146,7 +149,7 @@ public class UserRepository {
     return null;
   }
 
-  public void updateUser(User u) {
+  public User updateUser(User u) {
     db.update(
         new HashMap<String, String>() {
           {
@@ -159,7 +162,7 @@ public class UserRepository {
           }
         },
         "user",
-        "uuid = " + u.getUuid().toString());
+        "uuid = '" + u.getUuid().toString() + "'");
     if (u instanceof Passenger) {
       db.update(new HashMap<String, String>() {
         {
@@ -171,9 +174,11 @@ public class UserRepository {
       db.update(new HashMap<>() {
         {
           put("uuid_car %s", ((Driver) u).getCar().getUuid().toString());
+          put("wallet %s", String.valueOf(((Driver) u).getWallet()));
         }
-      }, "driver", "uuid = " + u.getUuid().toString());
+      }, "driver", "uuid = '" + u.getUuid().toString() + "'");
     }
+    return u;
   }
 
   public void updateUser(Map<String, String> fields) {
@@ -211,6 +216,8 @@ public class UserRepository {
         case "wallet":
           if (u instanceof Passenger) {
             ((Passenger) u).setWallet(Double.parseDouble(entry.getValue()));
+          } else if (u instanceof Driver) {
+            ((Driver) u).setWallet(Double.parseDouble(entry.getValue()));
           }
           break;
         case "uuid_car":
@@ -273,7 +280,7 @@ public class UserRepository {
     }
 
     for (Map<String, String> data : result) {
-      String uuid = data.get("user.uuid");
+      String uuid = data.get("user.uuid") == null ? data.get("uuid") : data.get("user.uuid");
       User u = null;
       if (users.containsKey(uuid)) {
         u = users.get(uuid);
@@ -304,6 +311,24 @@ public class UserRepository {
               data.get("payment_method"),
               Double.parseDouble(data.get("wallet")));
         } else if (data.get("uuid_car") != null) {
+          float rating;
+          double wallet;
+          int seats;
+          try {
+            rating = data.get("rating") == null ? 5 : Float.parseFloat(data.get("rating"));
+          } catch (Exception e) {
+            rating = 0;
+          }
+          try {
+            wallet = data.get("driver.wallet") == null ? 0 : Double.parseDouble(data.get("wallet"));
+          } catch (Exception e) {
+            wallet = 0;
+          }
+          try {
+            seats = data.get("seats") == null ? 4 : Integer.parseInt(data.get("seats"));
+          } catch (Exception e) {
+            seats = 4;
+          }
           u = new DriverClient(
               data.get("uuid"),
               data.get("salt"),
@@ -312,13 +337,14 @@ public class UserRepository {
               data.get("password"),
               data.get("address"),
               data.get("phone"),
-              Float.parseFloat(data.get("rating")),
+              rating,
+              wallet,
               new CarDefault(
                   data.get("uuid_car"),
                   data.get("model"),
                   data.get("color"),
                   data.get("year"),
-                  Integer.parseInt(data.get("seats")),
+                  seats,
                   data.get("license_plate")));
         }
       }

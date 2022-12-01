@@ -13,6 +13,8 @@ import models.TravelServiceInfo;
 public class RoutingService {
   public static TravelServiceInfo getTravelInfo(String latLong1, String latLong2) throws Exception {
     String baseRoutingUrl = "https://routing.openstreetmap.de/routed-car/route/v1/driving/";
+    latLong1 = latLong1.split(",")[1] + "," + latLong1.split(",")[0];
+    latLong2 = latLong2.split(",")[1] + "," + latLong2.split(",")[0];
     String path = latLong1 + ";" + latLong2;
     String params = "?overview=false&alternatives=true&steps=true";
     URL url;

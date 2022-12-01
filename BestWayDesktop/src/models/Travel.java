@@ -17,15 +17,17 @@ public interface Travel {
 
   public int getNumSeatsAvailable();
 
+  public float getRating();
+
   public void setNumSeatsAvailable(int numSeatsAvailable);
 
   public double getPrice();
 
   public void setPrice(double price);
 
-  public UUID getDriver();
+  public String getDriver();
 
-  public UUID getPassenger();
+  public String getPassenger();
 
   public void setOrigin(String origin);
 
@@ -37,7 +39,9 @@ public interface Travel {
 
   public void setNumSeats(int numSeats);
 
+  public void setRating(float rating);
+
   public static String getSQLString() {
-    return "travel (uuid_travel UUID, uuid_driver UUID, uuid_passenger UUID, origin VARCHAR, destination VARCHAR, departure_time VARCHAR, arrival_time VARCHAR, seats INT, seats_available INT, price DOUBLE, PRIMARY KEY (uuid_travel), FOREIGN KEY (uuid_passenger) REFERENCES passenger(uuid), FOREIGN KEY (uuid_driver) REFERENCES driver(uuid))";
+    return "travel (uuid_travel UUID, uuid_driver UUID, uuid_passenger UUID, origin VARCHAR, destination VARCHAR, departure_time VARCHAR, arrival_time VARCHAR, seats INT, seats_available INT, price DOUBLE, rating FLOAT, PRIMARY KEY (uuid_travel), FOREIGN KEY (uuid_passenger) REFERENCES passenger(uuid), FOREIGN KEY (uuid_driver) REFERENCES driver(uuid))";
   }
 }

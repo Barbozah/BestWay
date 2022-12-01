@@ -27,7 +27,7 @@ public class CarRepository {
         db.insert(
                 new HashMap<String, String>() {
                     {
-                        put("uuid %s", car.getUuid().toString());
+                        put("uuid_car %s", car.getUuid().toString());
                         put("model %s", car.getModel());
                         put("make %s", car.getMake());
                         put("color %s", car.getColor());
@@ -54,7 +54,7 @@ public class CarRepository {
 
     public Car getCar(String uuid) {
         List<Map<String, String>> result = db.select(
-                "select * from car where uuid_car = " + uuid);
+                "select * from car where uuid_car = '" + uuid + "'");
         if (result.size() == 0) {
             return null;
         }
@@ -67,6 +67,23 @@ public class CarRepository {
                 row.get("year"),
                 Integer.parseInt(row.get("seats")),
                 row.get("license_plate"));
+    }
+
+    public Car updateCar(Car car) {
+        db.update(
+                new HashMap<String, String>() {
+                    {
+                        put("model %s", car.getModel());
+                        put("make %s", car.getMake());
+                        put("color %s", car.getColor());
+                        put("license_plate %s", car.getLicensePlate());
+                        put("year %s", car.getYear());
+                        put("seats %s", String.valueOf(car.getNumSeats()));
+                    }
+                },
+                "car",
+                "uuid_car = " + car.getUuid().toString());
+        return car;
     }
 
     private Car parseCar(Map<String, String> row) {
@@ -82,9 +99,9 @@ public class CarRepository {
 
     public List<Car> getCarsByDriver(String uuid) {
         List<Map<String, String>> result = db.select(
-                "select * from car " + 
-                "left join driver on driver.uuid_car = car.uuid_car " +
-                "where driver.uuid = " + uuid);
+                "select * from car " +
+                        "left join driver on driver.uuid_car = car.uuid_car " +
+                        "where driver.uuid = '" + uuid + "'");
         List<Car> cars = new ArrayList<Car>();
         for (Map<String, String> row : result) {
             cars.add(parseCar(row));
